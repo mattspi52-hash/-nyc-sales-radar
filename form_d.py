@@ -23,10 +23,13 @@ from datetime import datetime, timedelta
 
 UA = {"User-Agent": "nyc-sales-radar mattspi52@gmail.com"}  # your contact for SEC
 
-# EDGAR full-text search (JSON). Narrows server-side to NY Form D in a date range.
-# Verify once in a browser if it 0-results: the param names occasionally shift.
+# EDGAR full-text search (JSON). q must be non-empty (empty -> 500), so we use
+# 'securities' (every Form D is a "Notice of Exempt Offering of Securities", so
+# this matches them all). locationCode=NY filters to NY filers server-side; we
+# also re-check state from each filing as a safety net.
 FTS = ("https://efts.sec.gov/LATEST/search-index"
-       "?q=&forms=D&locationCode=NY&startdt={start}&enddt={end}")
+       "?q=securities&forms=D&locationCode=NY"
+       "&dateRange=custom&startdt={start}&enddt={end}&from=0")
 
 MIN_AMOUNT = 1_000_000   # skip tiny/friends-and-family raises
 CAP        = 60          # don't hammer EDGAR; newest N filings
@@ -78,12 +81,14 @@ def recent_ny_raises(days=90):
     out=[]
     for h in hits:
         src=h.get("_source",{})
-        cik=(src.get("ciks") or [""])[0]
+        cik=(src.get("ciks") or ["0"])[0]
+        try: cik=str(int(cik))          # archives path wants the integer CIK
+        except ValueError: continue
         accession=h.get("_id","").split(":")[0]
         date=src.get("file_date","")
         try:
             rec=parse_form_d(cik, accession); rec["date"]=date
-            if rec["is_new"] and rec["amount"]>=MIN_AMOUNT:
+            if rec["is_new"] and rec["amount"]>=MIN_AMOUNT and rec["state"]=="NY":
                 out.append(rec)
         except Exception:
             pass

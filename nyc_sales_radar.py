@@ -52,11 +52,10 @@ SEED = [
     ("Caraway","carawayhome","consumer"), ("Hungryroot","hungryroot","consumer"),
     ("Daily Harvest","dailyharvest","consumer"), ("Bombas","bombas","consumer"),
     # ---- proptech / logistics ----
-    ("VTS","vts","proptech"), ("Latch","latch","proptech"), ("Veho","veho","logistics"),
+    ("VTS","vts","proptech"), ("Veho","veho","logistics"),
     ("Stord","stord","logistics"),
-    # ---- vertical / B2B SaaS ----
-    ("Justworks","justworks","b2b"), ("Monday.com","mondaycom","b2b"),
-    ("DoubleVerify","doubleverify","b2b"), ("MNTN","mntn","b2b"),
+    # ---- vertical / B2B SaaS (private only) ----
+    ("Justworks","justworks","b2b"),
     ("Namely","namely","b2b"), ("Andela","andela","b2b"),
     # ---- climate ----
     ("Crux","cruxclimate","climate"), ("David Energy","davidenergy","climate"),
