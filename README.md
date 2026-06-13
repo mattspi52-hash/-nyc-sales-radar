@@ -1,1 +1,1 @@
-# -nyc-sales-radar
+.github/workflows/daily.yml
